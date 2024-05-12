@@ -7,14 +7,6 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
   var validate = () => {
     var isValid = true;
 
@@ -52,25 +44,25 @@ const Login = () => {
         <h2 className="text-center mb-4">Log in</h2>
         <form className="m-auto">
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="email">Email Address : {email}</label>
             <input
               type="email"
               className="form-control"
               id="email"
               name="email"
-              onChange={handleEmail}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             {emailError && <p className="text-danger">{emailError}</p>}
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Password: {password}</label>
             <input
               type="password"
               className="form-control"
               id="password"
               name="password"
-              onChange={handlePassword}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             {passwordError && <p className="text-danger">{passwordError}</p>}
