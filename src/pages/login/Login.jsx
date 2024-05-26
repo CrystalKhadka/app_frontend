@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { loginUserApi } from "../../api/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,10 +12,10 @@ const Login = () => {
   var validate = () => {
     var isValid = true;
 
-    // validate the first name
+    // validate the email
 
-    if (email.trim() === "") {
-      setEmailError("EMail is required");
+    if (email.trim() === "" || !email.includes("@")) {
+      setEmailError("Email is empty or invalid");
       isValid = false;
     }
     if (password.trim() === "") {
@@ -25,8 +27,8 @@ const Login = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    var isValidated = validate();
-    if (!isValidated) {
+
+    if (!validate()) {
       return;
     }
 
@@ -35,7 +37,18 @@ const Login = () => {
       password: password,
     };
 
-    console.log(data);
+    loginUserApi(data).then((res) => {
+      if (!res.data.success) {
+        toast.error(res.data.message);
+      } else {
+        toast.success(res.data.message);
+        // success-bool, message-string, user-object, token-string
+        localStorage.setItem("token", res.data.token);
+        const convertedUserData = JSON.stringify(res.data.user);
+        localStorage.setItem("user", convertedUserData);
+        window.location.href = "/admin/dashboard";
+      }
+    });
   };
 
   return (
@@ -43,7 +56,7 @@ const Login = () => {
       <div className="form-container ">
         <h2 className="text-center mb-4">Log in</h2>
         <form className="m-auto">
-          <div className="form-group">
+          <div className="form-group mb-5">
             <label htmlFor="email">Email Address : {email}</label>
             <input
               type="email"
@@ -67,13 +80,15 @@ const Login = () => {
             />
             {passwordError && <p className="text-danger">{passwordError}</p>}
 
-            <button
-              type="submit"
-              className="btn btn-danger btn-block w-50 mt-5"
-              onClick={handleSubmit}
-            >
-              Login
-            </button>
+            <div className="d-flex justify-content-center">
+              <button
+                type="submit"
+                className="btn btn-danger btn-block w-50 mt-5"
+                onClick={handleSubmit}
+              >
+                Login
+              </button>
+            </div>
           </div>
         </form>
       </div>

@@ -1,12 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
   return (
     <nav className="navbar navbar-expand-lg">
       <div className="container-fluid">
         <a className="navbar-brand" href="#">
-          Pet <span className="text-danger">Adoption</span>
+          Crystal <span className="text-danger">Khadka</span>
         </a>
         <button
           className="navbar-toggler"
@@ -33,12 +41,55 @@ const Navbar = () => {
             </li>
           </ul>
           <form className="d-flex" role="search">
-            <a className="btn btn-primary mx-2" type="button" href="/login">
-              Login
-            </a>
-            <a href="/register" className="btn btn-primary ms-2" type="button">
-              Register
-            </a>
+            {user ? (
+              <>
+                <div class="dropdown">
+                  <button
+                    class="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Welcome {user.firstName}
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="/profile">
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="/settings">
+                        Settings
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        onClick={() => {
+                          localStorage.removeItem("user");
+                          localStorage.removeItem("token");
+                          window.location.href = "/login";
+                        }}
+                      >
+                        Logout
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link to={"/login"} className="btn" type="submit">
+                  Login
+                </Link>
+
+                <Link to={"/register"} className="btn" type="submit">
+                  Register
+                </Link>
+              </>
+            )}
           </form>
         </div>
       </div>
