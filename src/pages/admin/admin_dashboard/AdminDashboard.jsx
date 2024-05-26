@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { createProductApi } from "../../../api/api";
 
 const AdminDashboard = () => {
   const [productName, setProductName] = useState("");
@@ -9,6 +11,12 @@ const AdminDashboard = () => {
 
   const [previewImage, setPreviewImage] = useState(null);
 
+  const [productNameError, setProductNameError] = useState("");
+  const [productDescriptionError, setProductDescriptionError] = useState("");
+  const [productPriceError, setProductPriceError] = useState("");
+  const [productCategoryError, setProductCategoryError] = useState("");
+  const [productImageError, setProductImageError] = useState("");
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -16,14 +24,54 @@ const AdminDashboard = () => {
     setPreviewImage(URL.createObjectURL(file));
   };
 
+  var validate = () => {
+    if (productName.trim() === "") {
+      setProductNameError("Product Name is required");
+      return false;
+    }
+    if (productDescription.trim() === "") {
+      setProductDescriptionError("Product Description is required");
+      return false;
+    }
+    if (productPrice.trim() === "") {
+      setProductPriceError("Product Price is required");
+      return false;
+    }
+    if (productCategory.trim() === "") {
+      setProductCategoryError("Product Category is required");
+      return false;
+    }
+    if (productImage === "") {
+      setProductImageError("Product Image is required");
+      return false;
+    }
+    return true;
+  };
+
   // Handle SUbmit
   const handleSubmit = (e) => {
-    console.log({
-      productName,
-      productDescription,
-      productPrice,
-      productCategory,
-      productImage,
+    e.preventDefault();
+
+    // validate the form
+    if (!validate()) {
+      return;
+    }
+
+    // make a form data (txt, file)
+    const formData = new FormData();
+    formData.append("productName", productName);
+    formData.append("productDescription", productDescription);
+    formData.append("productPrice", productPrice);
+    formData.append("productCategory", productCategory);
+    formData.append("productImage", productImage);
+
+    // call the api
+    createProductApi(formData).then((res) => {
+      if (res.data.success === false) {
+        toast.error(res.data.message);
+      } else {
+        toast.success(res.data.message);
+      }
     });
   };
 
@@ -77,6 +125,9 @@ const AdminDashboard = () => {
                           placeholder="Product Name"
                           onChange={(e) => setProductName(e.target.value)}
                         />
+                        {productNameError && (
+                          <p className="text-danger">{productNameError}</p>
+                        )}
                       </div>
                       <div className="mb-3">
                         <label for="productDescription" className="form-label">
@@ -89,6 +140,11 @@ const AdminDashboard = () => {
                           }
                           rows="3"
                         ></textarea>
+                        {productDescriptionError && (
+                          <p className="text-danger">
+                            {productDescriptionError}
+                          </p>
+                        )}
                       </div>
                       <div className="mb-3">
                         <label
@@ -102,6 +158,9 @@ const AdminDashboard = () => {
                           placeholder="Product Price"
                           onChange={(e) => setProductPrice(e.target.value)}
                         />
+                        {productPriceError && (
+                          <p className="text-danger">{productPriceError}</p>
+                        )}
                       </div>
                       <div className="mb-3">
                         <label
@@ -118,6 +177,9 @@ const AdminDashboard = () => {
                           <option value="2">Category 2</option>
                           <option value="3">Category 3</option>
                         </select>
+                        {productCategoryError && (
+                          <p className="text-danger">{productCategoryError}</p>
+                        )}
                       </div>
                       <div className="mb-3">
                         <label
@@ -132,6 +194,9 @@ const AdminDashboard = () => {
                           className="form-control"
                           type="file"
                         />
+                        {productImageError && (
+                          <p className="text-danger">{productImageError}</p>
+                        )}
                       </div>
                       {previewImage && (
                         <div className="mb-2">
