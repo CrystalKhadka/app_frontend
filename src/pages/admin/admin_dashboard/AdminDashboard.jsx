@@ -1,21 +1,38 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-import { createProductApi } from "../../../api/api";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { createProductApi, getAllProductsApi } from '../../../api/api';
 
 const AdminDashboard = () => {
-  const [productName, setProductName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [productCategory, setProductCategory] = useState("");
+  const [productName, setProductName] = useState('');
+  const [productDescription, setProductDescription] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productCategory, setProductCategory] = useState('');
   const [productImage, setProductImage] = useState(null);
 
   const [previewImage, setPreviewImage] = useState(null);
 
-  const [productNameError, setProductNameError] = useState("");
-  const [productDescriptionError, setProductDescriptionError] = useState("");
-  const [productPriceError, setProductPriceError] = useState("");
-  const [productCategoryError, setProductCategoryError] = useState("");
-  const [productImageError, setProductImageError] = useState("");
+  const [productNameError, setProductNameError] = useState('');
+  const [productDescriptionError, setProductDescriptionError] = useState('');
+  const [productPriceError, setProductPriceError] = useState('');
+  const [productCategoryError, setProductCategoryError] = useState('');
+  const [productImageError, setProductImageError] = useState('');
+
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // get all products
+    getAllProductsApi()
+      .then((res) => {
+        if (res.status === 201) {
+          setProducts(res.data.products);
+        }
+        console.log(products);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -25,27 +42,36 @@ const AdminDashboard = () => {
   };
 
   var validate = () => {
-    if (productName.trim() === "") {
-      setProductNameError("Product Name is required");
+    if (productName.trim() === '') {
+      setProductNameError('Product Name is required');
       return false;
     }
-    if (productDescription.trim() === "") {
-      setProductDescriptionError("Product Description is required");
+    if (productDescription.trim() === '') {
+      setProductDescriptionError('Product Description is required');
       return false;
     }
-    if (productPrice.trim() === "") {
-      setProductPriceError("Product Price is required");
+    if (productPrice.trim() === '') {
+      setProductPriceError('Product Price is required');
       return false;
     }
-    if (productCategory.trim() === "") {
-      setProductCategoryError("Product Category is required");
+    if (productCategory.trim() === '') {
+      setProductCategoryError('Product Category is required');
       return false;
     }
-    if (productImage === "") {
-      setProductImageError("Product Image is required");
+    if (productImage === '') {
+      setProductImageError('Product Image is required');
       return false;
     }
     return true;
+  };
+
+  const resetForm = (e) => {
+    setProductName('');
+    setProductDescription('');
+    setProductPrice('');
+    setProductCategory('');
+    setProductImage(null);
+    setPreviewImage(null);
   };
 
   // Handle SUbmit
@@ -53,175 +79,183 @@ const AdminDashboard = () => {
     e.preventDefault();
 
     // validate the form
-    if (!validate()) {
-      return;
-    }
+    // if (!validate()) {
+    //   return;
+    // }
 
     // make a form data (txt, file)
     const formData = new FormData();
-    formData.append("productName", productName);
-    formData.append("productDescription", productDescription);
-    formData.append("productPrice", productPrice);
-    formData.append("productCategory", productCategory);
-    formData.append("productImage", productImage);
+    formData.append('productName', productName);
+    formData.append('productDescription', productDescription);
+    formData.append('productPrice', productPrice);
+    formData.append('productCategory', productCategory);
+    formData.append('productImage', productImage);
 
     // call the api
-    createProductApi(formData).then((res) => {
-      if (res.data.success === false) {
-        toast.error(res.data.message);
-      } else {
-        toast.success(res.data.message);
-      }
-    });
+    createProductApi(formData)
+      .then((res) => {
+        // For successful api
+        if (res.status === 201) {
+          toast.success(res.data.message);
+          resetForm(e);
+        }
+      })
+      .catch((err) => {
+        // For error status code
+        if (err.response) {
+          if (err.response.status === 400) {
+            toast.warning(err.response.data.message);
+          } else if (err.response.status === 500) {
+            toast.error(err.response.data.message);
+          } else {
+            toast.error('Something went wrong');
+          }
+        } else {
+          toast.error('Something went wrong');
+        }
+      });
   };
 
   return (
     <>
-      <div className="container-fluid">
-        <div className="d-flex justify-content-between">
-          <div className="">
+      <div className='container-fluid'>
+        <div className='d-flex justify-content-between'>
+          <div className=''>
             <h1>Admin Dashboard</h1>
           </div>
-          <div className="">
+          <div className=''>
             <button
-              type="button"
-              className="btn btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
+              type='button'
+              className='btn btn-primary'
+              data-bs-toggle='modal'
+              data-bs-target='#exampleModal'>
               Add Product
             </button>
             <div
-              className="modal fade"
-              id="exampleModal"
-              tabindex="-1"
-              aria-labelledby="exampleModalLabel"
-              aria-hidden="true"
-            >
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h1 className="modal-title fs-5" id="exampleModalLabel">
+              className='modal fade'
+              id='exampleModal'
+              tabindex='-1'
+              aria-labelledby='exampleModalLabel'
+              aria-hidden='true'>
+              <div className='modal-dialog'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h1
+                      className='modal-title fs-5'
+                      id='exampleModalLabel'>
                       Modal title
                     </h1>
                     <button
-                      type="button"
-                      className="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    ></button>
+                      type='button'
+                      className='btn-close'
+                      data-bs-dismiss='modal'
+                      aria-label='Close'></button>
                   </div>
-                  <div className="modal-body">
-                    <form action="/">
-                      <div className="mb-3">
+                  <div className='modal-body'>
+                    <form action='/'>
+                      <div className='mb-3'>
                         <label
-                          for="exampleFormControlInput1"
-                          className="form-label"
-                        >
+                          for='exampleFormControlInput1'
+                          className='form-label'>
                           Product Name
                         </label>
                         <input
-                          className="form-control"
-                          placeholder="Product Name"
+                          className='form-control'
+                          placeholder='Product Name'
                           onChange={(e) => setProductName(e.target.value)}
                         />
                         {productNameError && (
-                          <p className="text-danger">{productNameError}</p>
+                          <p className='text-danger'>{productNameError}</p>
                         )}
                       </div>
-                      <div className="mb-3">
-                        <label for="productDescription" className="form-label">
+                      <div className='mb-3'>
+                        <label
+                          for='productDescription'
+                          className='form-label'>
                           Product Description
                         </label>
                         <textarea
-                          className="form-control"
+                          className='form-control'
                           onChange={(e) =>
                             setProductDescription(e.target.value)
                           }
-                          rows="3"
-                        ></textarea>
+                          rows='3'></textarea>
                         {productDescriptionError && (
-                          <p className="text-danger">
+                          <p className='text-danger'>
                             {productDescriptionError}
                           </p>
                         )}
                       </div>
-                      <div className="mb-3">
+                      <div className='mb-3'>
                         <label
-                          for="exampleFormControlInput1"
-                          className="form-label"
-                        >
+                          for='exampleFormControlInput1'
+                          className='form-label'>
                           Product Price
                         </label>
                         <input
-                          className="form-control"
-                          placeholder="Product Price"
+                          className='form-control'
+                          placeholder='Product Price'
                           onChange={(e) => setProductPrice(e.target.value)}
                         />
                         {productPriceError && (
-                          <p className="text-danger">{productPriceError}</p>
+                          <p className='text-danger'>{productPriceError}</p>
                         )}
                       </div>
-                      <div className="mb-3">
+                      <div className='mb-3'>
                         <label
-                          for="exampleFormControlInput1"
-                          className="form-label"
-                        >
+                          for='exampleFormControlInput1'
+                          className='form-label'>
                           Product Category
                         </label>
                         <select
-                          className="form-control"
-                          onChange={(e) => setProductCategory(e.target.value)}
-                        >
-                          <option value="1">Flower</option>
-                          <option value="2">Category 2</option>
-                          <option value="3">Category 3</option>
+                          className='form-control'
+                          onChange={(e) => setProductCategory(e.target.value)}>
+                          <option value='1'>Flower</option>
+                          <option value='2'>Category 2</option>
+                          <option value='3'>Category 3</option>
                         </select>
                         {productCategoryError && (
-                          <p className="text-danger">{productCategoryError}</p>
+                          <p className='text-danger'>{productCategoryError}</p>
                         )}
                       </div>
-                      <div className="mb-3">
+                      <div className='mb-3'>
                         <label
-                          for="exampleFormControlInput1"
-                          className="form-label"
-                          onChange={(e) => setProductImage(e.target.value)}
-                        >
+                          for='exampleFormControlInput1'
+                          className='form-label'
+                          onChange={(e) => setProductImage(e.target.value)}>
                           Product Image
                         </label>
                         <input
                           onChange={handleImageChange}
-                          className="form-control"
-                          type="file"
+                          className='form-control'
+                          type='file'
                         />
                         {productImageError && (
-                          <p className="text-danger">{productImageError}</p>
+                          <p className='text-danger'>{productImageError}</p>
                         )}
                       </div>
                       {previewImage && (
-                        <div className="mb-2">
+                        <div className='mb-2'>
                           <img
                             src={previewImage}
-                            className="img-fluid rounded"
-                            alt="product"
+                            className='img-fluid rounded'
+                            alt='product'
                           />
                         </div>
                       )}
                     </form>
                   </div>
-                  <div className="modal-footer">
+                  <div className='modal-footer'>
                     <button
-                      type="button"
-                      className="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
+                      type='button'
+                      className='btn btn-secondary'
+                      data-bs-dismiss='modal'>
                       Close
                     </button>
                     <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={handleSubmit}
-                    >
+                      type='button'
+                      className='btn btn-primary'
+                      onClick={handleSubmit}>
                       Save changes
                     </button>
                   </div>
@@ -230,39 +264,45 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-        <table className="table">
-          <thead className="table-dark">
+        <table className='table'>
+          <thead className='table-dark'>
             <tr>
-              <th scope="col">Product Image</th>
-              <th scope="col">Product Name</th>
-              <th scope="col">Product Price</th>
-              <th scope="col">Product Description</th>
-              <th scope="col">Product Category</th>
-              <th scope="col">Actions</th>
+              <th scope='col'>Product Image</th>
+              <th scope='col'>Product Name</th>
+              <th scope='col'>Product Price</th>
+              <th scope='col'>Product Description</th>
+              <th scope='col'>Product Category</th>
+              <th scope='col'>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <img
-                  src="https://th.bing.com/th/id/R.892bb645c09c766efcc5bc4d0c93094a?rik=slmcvUaa5yToAw&riu=http%3a%2f%2fwww.wallpapers13.com%2fwp-content%2fuploads%2f2015%2f12%2fNature-Lake-Bled.-Desktop-background-image.jpg&ehk=c2raFC95S12P3OL0%2fwdM60ro3oUxsSEajkuGEN%2fsjbo%3d&risl=1&pid=ImgRaw&r=0"
-                  alt="product"
-                  width="50px"
-                />
-              </td>
-              <td>Product 1</td>
-              <td>$100</td>
-              <td>Created a product</td>
-              <td>Category 1</td>
-              <td>
-                <a href="/edit" className="btn btn-primary">
-                  Edit
-                </a>
-                <a href="/delete" className="btn btn-danger">
-                  Delete
-                </a>
-              </td>
-            </tr>
+            {products.map((product) => (
+              <tr>
+                <td>
+                  <img
+                    src={`http://localhost:5000/products/${product.productImage}`}
+                    alt={product.productName}
+                    width='50px'
+                  />
+                </td>
+                <td>{product.productName}</td>
+                <td>{product.productPrice}</td>
+                <td>{product.productDescription}</td>
+                <td>{product.productCategory}</td>
+                <td>
+                  <Link
+                    to={'/admin/update/' + product._id}
+                    className='btn btn-primary'>
+                    Edit
+                  </Link>
+                  <a
+                    href='/delete'
+                    className='btn btn-danger'>
+                    Delete
+                  </a>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -271,3 +311,10 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+// Edit product
+// Admin Dashboard (Table)
+//  Make a route (Admin Edit product)
+// Fill all the related information
+// edit garna milnu paryo (text,file)
+// Make a backend to update product
