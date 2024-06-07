@@ -12,18 +12,23 @@ const UpdateProduct = () => {
   const [productCategory, setProductCategory] = useState('');
   const [productImage, setProductImage] = useState(null);
 
-  const [previewImage, setPreviewImage] = useState(null);
+  const [oldImage, setOldImage] = useState(null);
+  const [previewNewImage, setPreviewNewImage] = useState(null);
 
   useEffect(() => {
     // Fetch the product details from the API
-    getSingleProductApi(id).then((res) => {
-      console.log(res.data.product);
-      setProductName(res.data.product.productName);
-      setProductDescription(res.data.product.productDescription);
-      setProductPrice(res.data.product.productPrice);
-      setProductCategory(res.data.product.productCategory);
-      setProductImage(res.data.product.productImage);
-    });
+    getSingleProductApi(id)
+      .then((res) => {
+        console.log(res.data.product);
+        setProductName(res.data.product.productName);
+        setProductDescription(res.data.product.productDescription);
+        setProductPrice(res.data.product.productPrice);
+        setProductCategory(res.data.product.productCategory);
+        setOldImage(res.data.product.productImage);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // set the product details to the state
   }, [id]);
 
@@ -31,20 +36,24 @@ const UpdateProduct = () => {
     const file = e.target.files[0];
 
     setProductImage(file);
-    setPreviewImage(URL.createObjectURL(file));
+    setPreviewNewImage(URL.createObjectURL(file));
   };
   return (
+
+    
+    
+
     <>
       <div className='container'>
         <div>
-          <h2 className='text-center mb-4'>Update Product For</h2>
+          <h2 className='text-center mb-4'>Update Product For {productName}</h2>
         </div>
         <div className='row'>
           <div className='col-4'>
             <form>
               <div className='mb-3'>
                 <label
-                  for='exampleFormControlInput1'
+                  htmlFor='exampleFormControlInput1'
                   className='form-label'>
                   Product Name
                 </label>
@@ -57,7 +66,7 @@ const UpdateProduct = () => {
               </div>
               <div className='mb-3'>
                 <label
-                  for='productDescription'
+                  htmlFor='productDescription'
                   className='form-label'>
                   Product Description
                 </label>
@@ -69,7 +78,7 @@ const UpdateProduct = () => {
               </div>
               <div className='mb-3'>
                 <label
-                  for='exampleFormControlInput1'
+                  htmlFor='exampleFormControlInput1'
                   className='form-label'>
                   Product Price
                 </label>
@@ -82,7 +91,7 @@ const UpdateProduct = () => {
               </div>
               <div className='mb-3'>
                 <label
-                  for='exampleFormControlInput1'
+                  htmlFor='exampleFormControlInput1'
                   className='form-label'>
                   Product Category
                 </label>
@@ -97,7 +106,7 @@ const UpdateProduct = () => {
               </div>
               <div className='mb-3'>
                 <label
-                  for='exampleFormControlInput1'
+                  htmlFor='exampleFormControlInput1'
                   className='form-label'
                   onChange={(e) => setProductImage(e.target.value)}>
                   Product Image
@@ -118,22 +127,24 @@ const UpdateProduct = () => {
             </form>
           </div>
           <div className='col-8'>
-            {previewImage ? (
+            {!previewNewImage ? (
               <div className='mb-2'>
                 <img
-                  src={previewImage}
+                  src={`http://localhost:5000/products/${oldImage}`}
                   className='img-fluid rounded w-100 h-50'
                   alt='product'
                 />
               </div>
             ) : (
-              <div className='mb-2'>
-                <img
-                  src={`http://localhost:5000/products/${productImage}`}
-                  className='img-fluid rounded w-100 h-50'
-                  alt='product'
-                />
-              </div>
+              <>
+                <div className='mb-2'>
+                  <img
+                    src={previewNewImage}
+                    className='img-fluid rounded w-100 h-50'
+                    alt='product'
+                  />
+                </div>
+              </>
             )}
           </div>
         </div>

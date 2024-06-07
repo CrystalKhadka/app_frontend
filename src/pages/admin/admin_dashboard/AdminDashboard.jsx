@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { createProductApi, getAllProductsApi } from '../../../api/api';
+import {
+  createProductApi,
+  deleteProductAPi,
+  getAllProductsApi,
+} from '../../../api/api';
 
 const AdminDashboard = () => {
   const [productName, setProductName] = useState('');
@@ -65,15 +69,6 @@ const AdminDashboard = () => {
     return true;
   };
 
-  const resetForm = (e) => {
-    setProductName('');
-    setProductDescription('');
-    setProductPrice('');
-    setProductCategory('');
-    setProductImage(null);
-    setPreviewImage(null);
-  };
-
   // Handle SUbmit
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -97,7 +92,7 @@ const AdminDashboard = () => {
         // For successful api
         if (res.status === 201) {
           toast.success(res.data.message);
-          resetForm(e);
+          window.location.reload();
         }
       })
       .catch((err) => {
@@ -114,6 +109,28 @@ const AdminDashboard = () => {
           toast.error('Something went wrong');
         }
       });
+  };
+
+  // handle delete
+  const handleDelete = (id) => {
+    const confirm = window.confirm('Are you sure you want to delete?');
+    if (confirm) {
+      deleteProductAPi(id)
+        .then((res) => {
+          if (res.status === 201) {
+            // Add delay of 2 seconds
+            toast.success(res.data.message);
+            window.location.reload();
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 500) {
+            toast.error(err.response.data.message);
+          } else {
+            toast.error('Something went wrong');
+          }
+        });
+    }
   };
 
   return (
@@ -292,14 +309,16 @@ const AdminDashboard = () => {
                 <td>
                   <Link
                     to={'/admin/update/' + product._id}
-                    className='btn btn-primary'>
+                    className='btn btn-primary mx-3'>
                     Edit
                   </Link>
-                  <a
-                    href='/delete'
-                    className='btn btn-danger'>
+
+                  <button
+                    type='button'
+                    class='btn btn-danger'
+                    onClick={() => handleDelete(product._id)}>
                     Delete
-                  </a>
+                  </button>
                 </td>
               </tr>
             ))}

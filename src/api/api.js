@@ -27,3 +27,7 @@ export const getAllProductsApi = () => Api.get('/api/product/get_all_products');
 // get single product API
 export const getSingleProductApi = (id) =>
   Api.get(`/api/product/get_one_product/${id}`);
+
+export const deleteProductAPi = (id) => {
+  return Api.delete(`/api/product/delete/${id}`);
+};
