@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getSingleProductApi } from '../../../api/api';
+import { toast } from 'react-toastify';
+import { getSingleProductApi, updateProductApi } from '../../../api/api';
 
 const UpdateProduct = () => {
   // Get the id from the URL
@@ -38,11 +39,41 @@ const UpdateProduct = () => {
     setProductImage(file);
     setPreviewNewImage(URL.createObjectURL(file));
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('productName', productName);
+    formData.append('productDescription', productDescription);
+    formData.append('productPrice', productPrice);
+    formData.append('productCategory', productCategory);
+    if (productImage) {
+      formData.append('productImage', productImage);
+    }
+
+    // Call the updateProductApi function from the API
+    updateProductApi(id, formData)
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success(res.data.message);
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === '404') {
+            toast.error(err.response.data.message);
+          } else if (err.response.status === '500') {
+            toast.error(err.response.data.message);
+          } else {
+            toast.error('Something went wrong');
+          }
+        } else {
+          toast.error('Something went wrong');
+        }
+      });
+  };
   return (
-
-    
-    
-
     <>
       <div className='container'>
         <div>
@@ -119,7 +150,7 @@ const UpdateProduct = () => {
               </div>
               <div className=''>
                 <button
-                  type='submit'
+                  onClick={handleSubmit}
                   className='btn btn-danger btn-block w-100 '>
                   Update Product
                 </button>

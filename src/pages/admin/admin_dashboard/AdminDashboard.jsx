@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -24,7 +25,13 @@ const AdminDashboard = () => {
 
   const [products, setProducts] = useState([]);
 
+  // Get token
+  const token = localStorage.getItem('token');
+
+  // Set the token to the header
+
   useEffect(() => {
+    
     // get all products
     getAllProductsApi()
       .then((res) => {
