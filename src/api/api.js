@@ -33,12 +33,12 @@ export const getAllProductsApi = () =>
 
 // get single product API
 export const getSingleProductApi = (id) =>
-  Api.get(`/api/product/get_one_product/${id}`,config);
+  Api.get(`/api/product/get_one_product/${id}`, config);
 
 export const deleteProductAPi = (id) => {
-  return Api.delete(`/api/product/delete/${id}`);
+  return Api.delete(`/api/product/delete/${id}`, config);
 };
 
 export const updateProductApi = (id, data) => {
-  return Api.put(`/api/product/update_product/${id}`, data);
+  return Api.put(`/api/product/update_product/${id}`, data, config);
 };

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -31,7 +30,6 @@ const AdminDashboard = () => {
   // Set the token to the header
 
   useEffect(() => {
-    
     // get all products
     getAllProductsApi()
       .then((res) => {
@@ -132,6 +130,8 @@ const AdminDashboard = () => {
         })
         .catch((err) => {
           if (err.response.status === 500) {
+            toast.error(err.response.data.message);
+          } else if (err.response.status === 400) {
             toast.error(err.response.data.message);
           } else {
             toast.error('Something went wrong');

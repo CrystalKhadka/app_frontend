@@ -51,7 +51,11 @@ const Login = () => {
 
         // set authorization header
 
-        window.location.href = '/admin/dashboard';
+        if (res.data.user.isAdmin) {
+          window.location.href = '/admin/dashboard';
+        } else {
+          window.location.href = '/';
+        }
       }
     });
   };

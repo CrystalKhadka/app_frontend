@@ -60,14 +60,10 @@ const UpdateProduct = () => {
         }
       })
       .catch((err) => {
-        if (err.response) {
-          if (err.response.status === '404') {
-            toast.error(err.response.data.message);
-          } else if (err.response.status === '500') {
-            toast.error(err.response.data.message);
-          } else {
-            toast.error('Something went wrong');
-          }
+        if (err.response.status === 500) {
+          toast.error(err.response.data.message);
+        } else if (err.response.status === 400) {
+          toast.error(err.response.data.message);
         } else {
           toast.error('Something went wrong');
         }
