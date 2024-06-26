@@ -9,6 +9,7 @@ import Homepage from './pages/homepage/Homepage';
 import Login from './pages/login/Login';
 import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
+import Test from './pages/test/Test';
 import AdminRoutes from './protected_routes/AdminRoutes';
 import UserRoutes from './protected_routes/UserRoutes';
 
@@ -29,6 +30,10 @@ function App() {
         <Route
           path='/'
           element={<Homepage />}
+        />
+        <Route
+          path='/test'
+          element={<Test />}
         />
 
         <Route element={<UserRoutes />}>

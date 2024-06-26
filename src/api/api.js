@@ -42,3 +42,11 @@ export const deleteProductAPi = (id) => {
 export const updateProductApi = (id, data) => {
   return Api.put(`/api/product/update_product/${id}`, data, config);
 };
+
+export const pagination = (id) => {
+  return Api.get(`/api/product//get_paginated_products/?page=${id}`, config);
+};
+
+export const getProductCount = () => {
+  return Api.get('/api/product/get_products_count', config);
+};
