@@ -1,8 +1,8 @@
+import { Navbar } from 'react-bootstrap';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
-import Navbar from './components/Navbar';
 import AdminDashboard from './pages/admin/admin_dashboard/AdminDashboard';
 import UpdateProduct from './pages/admin/updateProduct/UpdateProduct';
 import Homepage from './pages/homepage/Homepage';

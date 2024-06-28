@@ -50,3 +50,11 @@ export const pagination = (id) => {
 export const getProductCount = () => {
   return Api.get('/api/product/get_products_count', config);
 };
+
+export const forgotPasswordApi = (data) => {
+  return Api.post('/api/user/forgot-password', data);
+};
+
+export const resetPasswordApi = (data) => {
+  return Api.post('/api/user/reset-password', data);
+};

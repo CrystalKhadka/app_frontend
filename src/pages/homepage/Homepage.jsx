@@ -152,7 +152,7 @@ const Homepage = () => {
             <ul class='pagination justify-content-center'>
               <li class='page-item'>
                 <button
-                  class='page-link'
+                  className={page === 1 ? 'page-link disabled' : 'page-link'}
                   onClick={() => {
                     handlePagination(1);
                   }}>
@@ -161,7 +161,7 @@ const Homepage = () => {
               </li>
               <li class='page-item'>
                 <button
-                  class='page-link'
+                  className={page === 1 ? 'page-link disabled' : 'page-link'}
                   onClick={() => {
                     handlePagination(page - 1);
                   }}>
@@ -181,7 +181,9 @@ const Homepage = () => {
               ))}
               <li class='page-item'>
                 <button
-                  class='page-link'
+                  className={
+                    page === totalPages ? 'page-link disabled' : 'page-link'
+                  }
                   onClick={() => {
                     handlePagination(page + 1);
                   }}>
@@ -190,7 +192,9 @@ const Homepage = () => {
               </li>
               <li class='page-item'>
                 <button
-                  class='page-link'
+                  className={
+                    page === totalPages ? 'page-link disabled' : 'page-link'
+                  }
                   onClick={() => {
                     handlePagination(totalPages);
                   }}>
